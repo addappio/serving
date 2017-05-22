@@ -1,17 +1,4 @@
-node_modules
-/bazel-bin
-/bazel-ci_build-cache
-/bazel-genfiles
-/bazel-out
-/bazel-serving
-/bazel-tensorflow
-/bazel-tensorflow_serving
-/bazel-testlogs
-/bazel-tf
-/bazel-workspace
-/third_party/py/numpy/numpy_include
-/util/python/python_include
-/util/python/python_lib
+# Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -110,4 +97,8 @@ ENV/
 
 # IDE
 .idea
+
+# Dockerfiles
+Dockerfile
+Dockerfile.*
 
