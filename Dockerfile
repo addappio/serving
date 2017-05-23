@@ -20,6 +20,11 @@ RUN apt-get update && \
         zlib1g-dev \
         libcurl3-dev \
         vim \
+        supervisor \
+        openssh-server \
+        nginx \
+        libpq-dev \
+        rsyslog \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -86,6 +91,7 @@ COPY base_models/berate /tmp/models/berate
 COPY base_models/suicide /tmp/models/suicide
 COPY models_config.txt /root/models_config.txt
 COPY tensorflow_serving /serving/tensorflow_serving
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN cd /serving/tensorflow && \
     yes "" | ./configure
@@ -93,5 +99,11 @@ RUN cd /serving/tensorflow && \
 RUN cd /serving/ && \
     bazel build -c opt --local_resources 6144,5,1.0 tensorflow_serving/...
 
-EXPOSE 9000 8080
-CMD /root/setup.sh
+# Make NGINX run on the foreground
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf && \
+    rm /etc/nginx/sites-enabled/default
+# Copy the modified nginx conf
+COPY nginx.conf /etc/nginx/conf.d/
+
+EXPOSE 9000 80
+CMD ["/usr/bin/supervisord", "-c",  "/etc/supervisor/conf.d/supervisord.conf"]
