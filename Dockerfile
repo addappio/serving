@@ -84,11 +84,10 @@ RUN mkdir /serving && \
 
 COPY tools /serving/tools
 COPY setup.sh /root/setup.sh
+COPY base_models/ /tmp/models/
 COPY tf_models /serving/tf_models
 COPY WORKSPACE /serving/WORKSPACE
 COPY tensorflow /serving/tensorflow
-COPY base_models/berate /tmp/models/berate
-COPY base_models/suicide /tmp/models/suicide
 COPY models_config.txt /root/models_config.txt
 COPY tensorflow_serving /serving/tensorflow_serving
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
