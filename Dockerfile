@@ -82,13 +82,16 @@ COPY setup.sh /root/setup.sh
 COPY tf_models /serving/tf_models
 COPY WORKSPACE /serving/WORKSPACE
 COPY tensorflow /serving/tensorflow
+COPY base_models/berate /tmp/models/berate
+COPY base_models/suicide /tmp/models/suicide
+COPY models_config.txt /root/models_config.txt
 COPY tensorflow_serving /serving/tensorflow_serving
 
 RUN cd /serving/tensorflow && \
     yes "" | ./configure
 
 RUN cd /serving/ && \
-    bazel build -c opt --local_resources 2048,.5,1.0 tensorflow_serving/...
+    bazel build -c opt --local_resources 6144,5,1.0 tensorflow_serving/...
 
 EXPOSE 9000 8080
 CMD /root/setup.sh

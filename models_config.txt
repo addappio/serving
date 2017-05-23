@@ -1,0 +1,14 @@
+model_config_list: {
+
+  config: {
+    name: "suicide",
+    base_path: "/tmp/models/suicide",
+    model_platform: "tensorflow"
+  },
+  config: {
+    name: "berate",
+    base_path: "/tmp/models/berate",
+    model_platform: "tensorflow"
+  },
+
+}

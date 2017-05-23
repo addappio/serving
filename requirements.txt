@@ -1,0 +1,12 @@
+enum34
+futures
+mock
+six
+flask
+scipy
+scikit-learn
+requests
+waitress
+tensorflow
+grpcio
+werkzeug

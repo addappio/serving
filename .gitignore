@@ -111,3 +111,6 @@ ENV/
 # IDE
 .idea
 
+# Models
+base_models
+
