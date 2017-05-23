@@ -1,47 +1,10 @@
 # TensorFlow Serving
 
-[![Build Status](http://ci.tensorflow.org/buildStatus/icon?job=serving-master-cpu)](http://ci.tensorflow.org/job/serving-master-cpu)
-
-TensorFlow Serving is an open-source software library for serving
+>TensorFlow Serving is an open-source software library for serving
 machine learning models. It deals with the *inference* aspect of machine
 learning, taking models after *training* and managing their lifetimes, providing
 clients with versioned access via a high-performance, reference-counted lookup
 table.
-
-Multiple models, or indeed multiple versions of the same model, can be served
-simultaneously. This flexibility facilitates canarying new versions,
-non-atomically migrating clients to new models or versions, and A/B testing
-experimental models.
-
-The primary use-case is high-performance production serving, but the same
-serving infrastructure can also be used in bulk-processing (e.g. map-reduce)
-jobs to pre-compute inference results or analyze model performance. In both
-scenarios, GPUs can substantially increase inference throughput. TensorFlow
-Serving comes with a scheduler that groups individual inference requests into
-batches for joint execution on a GPU, with configurable latency controls.
-
-TensorFlow Serving has out-of-the-box support for TensorFlow models (naturally),
-but at its core it manages arbitrary versioned items (*servables*) with
-pass-through to their native APIs. In addition to trained TensorFlow models,
-servables can include other assets needed for inference such as embeddings,
-vocabularies and feature transformation configs, or even non-TensorFlow-based
-machine learning models.
-
-The architecture is highly modular. You can use some parts individually (e.g.
-batch scheduling) or use all the parts together. There are numerous plug-in
-points; perhaps the most useful ways to extend the system are:
-(a) [creating a new type of servable](tensorflow_serving/g3doc/custom_servable.md);
-(b) [creating a custom source of servable versions](tensorflow_serving/g3doc/custom_source.md).
-
-**If you'd like to contribute to TensorFlow Serving, be sure to review the
-[contribution guidelines](CONTRIBUTING.md).**
-
-**We use [GitHub issues](https://github.com/tensorflow/serving/issues) for
-tracking requests and bugs.**
-
-# Download and Setup
-
-See [install instructions](tensorflow_serving/g3doc/setup.md).
 
 ## Tutorials
 
@@ -52,3 +15,54 @@ See [install instructions](tensorflow_serving/g3doc/setup.md).
 
 * [Serving architecture overview](tensorflow_serving/g3doc/architecture_overview.md)
 * [TensorFlow website](http://tensorflow.org)
+
+## Getting started
+
+### Build the docker images
+```bash
+cd /into/this/repo
+docker build -t tfserving .
+```
+
+### Run the docker image locally
+```bash
+docker run -d -p 8080:80 -p 9000:9000 --name serving tfserving
+```
+
+## Updating models
+You can add a model in the `models_config.txt`. Just add a `config` key into the `model_config_list`. 
+Model versions are stored in the `/tmp/models` base folder. Name the model (sub) folder the same as the model `name`.
+
+```yaml
+config: {
+    name: "suicide",
+    base_path: "/tmp/models/suicide",
+    model_platform: "tensorflow"
+}
+```
+
+## REST endpoints
+
+### Uploading a model
+Models are uploaded by querying the `/upload` endpoint with a `.zip` or `.tar.gz`. 
+The file will get extracted and model checkpoints and graph definitions will be stored in `/tmp/models/model_name`. 
+TensorFlow Serving will pick up the new model and reload it.
+```bash
+curl -X POST http://service.url/upload -H 'cache-control: no-cache' -H 'content-type: multipart/form-data' -F model_name=MODEL_NAME -F file=@FILE_LOCATION.{zip, tar.gz}
+```
+
+### Prediction
+You can get a prediction by querying the `/prediction` endpoint. You need to specify and `"input"` and `"model_name`.
+```bash
+curl -X POST http://service.url/prediction -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{"input": [[]], "model_name": "suicide"}'
+```
+
+## gRPC 
+
+### Install gRPC for python
+```bash
+pip install grpcio
+```
+
+### Getting started with gRPC
+TODO
