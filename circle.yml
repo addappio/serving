@@ -1,0 +1,22 @@
+machine:
+  python:
+    version: 2.7.11
+  environment:
+      PROJECT_NAME: serving
+
+test:
+    post:
+        - git config --global user.email "circle@circle.com"
+        - git config --global user.name "Circle deploy"
+
+deployment:
+  staging:
+    branch: develop
+    commands:
+      - docker login -e="." -u="addapptech+aptible" -p="MH0KWLWRLUOQHJ129X3XO1RHB5GL07PA7PEJBRB5I07FX522OQJZXXW09KHY2ATX" quay.io
+      - git push git@beta.aptible.com:therachat-stag/stag-serving.git develop:master --force
+#  production:
+#    branch: master
+#    commands:
+#      - docker login -e="." -u="addapptech+aptible" -p="MH0KWLWRLUOQHJ129X3XO1RHB5GL07PA7PEJBRB5I07FX522OQJZXXW09KHY2ATX" quay.io
+#      - git push git@beta.aptible.com:therachat-stag/stag-serving.git master:master --force
