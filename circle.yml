@@ -3,6 +3,8 @@ machine:
     version: 2.7.11
   environment:
       PROJECT_NAME: serving
+  services:
+      - docker
 
 test:
     post:
