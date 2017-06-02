@@ -84,7 +84,7 @@ RUN mkdir /serving && \
 
 COPY tools /serving/tools
 COPY setup.sh /root/setup.sh
-COPY base_models/ /tmp/models/
+COPY models/ /tmp/models/
 COPY tf_models /serving/tf_models
 COPY WORKSPACE /serving/WORKSPACE
 COPY tensorflow /serving/tensorflow
@@ -96,7 +96,7 @@ RUN cd /serving/tensorflow && \
     yes "" | ./configure
 
 RUN cd /serving/ && \
-    bazel build -c opt --local_resources 6144,5,1.0 tensorflow_serving/...
+    bazel build -c opt --local_resources 2048,.5,1.0 tensorflow_serving/...
 
 # Make NGINX run on the foreground
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf && \

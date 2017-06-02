@@ -9,3 +9,8 @@
 Dockerfile
 Dockerfile.*
 
+# README files
+*.md
+
+# gitignore
+.gitignore
