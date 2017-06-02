@@ -5,6 +5,11 @@ model_config_list: {
     model_platform: "tensorflow"
   },
   config: {
+    name: "command",
+    base_path: "/tmp/models/command",
+    model_platform: "tensorflow"
+  },
+  config: {
     name: "conversation-end",
     base_path: "/tmp/models/conversation-end",
     model_platform: "tensorflow"
@@ -15,13 +20,33 @@ model_config_list: {
     model_platform: "tensorflow"
   },
   config: {
-    name: "suicide",
-    base_path: "/tmp/models/suicide",
+    name: "invalid-input",
+    base_path: "/tmp/models/invalid-input",
     model_platform: "tensorflow"
   },
   config: {
-    name: "invalid-input",
-    base_path: "/tmp/models/invalid-input",
+    name: "question-continuer",
+    base_path: "/tmp/models/question-continuer",
+    model_platform: "tensorflow"
+  },
+  config: {
+    name: "question-dependency",
+    base_path: "/tmp/models/question-dependency",
+    model_platform: "tensorflow"
+  },
+  config: {
+    name: "question-noun",
+    base_path: "/tmp/models/question-noun",
+    model_platform: "tensorflow"
+  },
+  config: {
+    name: "question-other",
+    base_path: "/tmp/models/question-other",
+    model_platform: "tensorflow"
+  },
+  config: {
+    name: "suicide",
+    base_path: "/tmp/models/suicide",
     model_platform: "tensorflow"
   },
 }
