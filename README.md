@@ -18,6 +18,11 @@ table.
 
 ## Getting started
 
+### Clone this bad boy
+```bash
+git clone --recurse-submodules https://github.com/addappio/serving
+```
+
 ### Build the docker images
 ```bash
 cd /into/this/repo
