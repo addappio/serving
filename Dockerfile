@@ -10,6 +10,7 @@ RUN apt-get update && \
         libfreetype6-dev \
         libpng12-dev \
         libzmq3-dev \
+        libffi-dev \
         pkg-config \
         python-dev \
         python-numpy \

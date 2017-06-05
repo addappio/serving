@@ -1,14 +1,13 @@
-import os
+import bcrypt
 import json
+import jwt
+import os
 import tarfile
 import zipfile
-import tensorflow as tf
-from waitress import serve
-from grpc.beta import implementations
+from functools import wraps
+
 from flask import Flask, request, Response
-from tensorflow_serving.apis import predict_pb2
-from google.protobuf.json_format import MessageToJson
-from tensorflow_serving.apis import prediction_service_pb2
+from waitress import serve
 
 # test
 # curl -X POST http://localhost:8080/upload -H 'cache-control: no-cache' -H 'content-type: multipart/form-data'
@@ -58,38 +57,36 @@ def response(response, status=200):
                     mimetype='application/json')
 
 
+def __check_auth(bearer):
+    payload = jwt.decode(bearer.encode('utf-8'), os.environ.get("SECRET"), algorithm='HS256')
+    return bcrypt.hashpw(payload.token.encode('utf-8'), bcrypt.gensalt()) == os.environ.get('BASE_AUTH_TOKEN')
+
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401)
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not __check_auth(auth.bearer):
+            return authenticate()
+        return f(*args, **kwargs)
+
+    return decorated
+
+
 @app.route('/', methods=["GET"])
 def health():
     return response(status=200, response=dict(status="Ok",
                                               message="Stuff seems to be working well."))
 
 
-@app.route('/prediction', methods=["GET", "POST"])
-def get_prediction():
-    if request.headers['Content-Type'] == 'application/json':
-
-        payload = request.get_json()
-        model_input = payload.get('input')
-        model_name = payload.get('model_name')
-
-        channel = implementations.insecure_channel(HOST, int(PORT))
-        stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
-
-        predict = predict_pb2.PredictRequest()
-        predict.model_spec.name = model_name
-
-        predict.inputs['inputs'].CopyFrom(tf.contrib.util.make_tensor_proto(model_input))
-
-        result = stub.Predict(predict, 10.0)  # 10 secs timeout
-        return Response(response=MessageToJson(result),
-                        status=200,
-                        mimetype='application/json')
-
-    else:
-        return response(status=400, response=dict(status="failed",
-                                                  message="Content Type not accepted."))
-
-
+@requires_auth
 @app.route('/upload', methods=["POST"])
 def upload_model():
     # check if the post request has the file part
@@ -119,14 +116,14 @@ def upload_model():
             try:
                 unzip(fn, destination)
             except Exception as _:
-                print _
+                print(_)
                 return error_message
 
         if fn.filename.endswith('tar.gz'):
             try:
                 untar(fn, destination)
             except Exception as _:
-                print _
+                print(_)
                 return error_message
 
         return response(status=200, response=dict(status="success",
