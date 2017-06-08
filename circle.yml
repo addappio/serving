@@ -15,12 +15,10 @@ deployment:
   staging:
     branch: develop
     commands:
-      - docker login -e="." -u="addapptech+aptible" -p="MH0KWLWRLUOQHJ129X3XO1RHB5GL07PA7PEJBRB5I07FX522OQJZXXW09KHY2ATX" quay.io
       - mv Dockerfile Dockerfile-base && mv Dockerfile-aptible Dockerfile
       - git add Dockerfile-base Dockerfile && git commit -m "Changing Dockerfile"
       - git push git@beta.aptible.com:therachat-stag/stag-serving.git develop:master --force
 #  production:
 #    branch: master
 #    commands:
-#      - docker login -e="." -u="addapptech+aptible" -p="MH0KWLWRLUOQHJ129X3XO1RHB5GL07PA7PEJBRB5I07FX522OQJZXXW09KHY2ATX" quay.io
 #      - git push git@beta.aptible.com:therachat-stag/stag-serving.git master:master --force
