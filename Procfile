@@ -1,2 +1,1 @@
 web: /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
-serving: /serving/bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server --port=9000 --model_config_file=/root/models_config.txt
