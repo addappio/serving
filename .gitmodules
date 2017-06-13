@@ -7,3 +7,7 @@
 [submodule "models"]
 	path = models
 	url = https://github.com/addappio/datascience-models.git
+[submodule "http"]
+	path = http
+	url = https://github.com/addappio/serving-http.git
+	branch = develop

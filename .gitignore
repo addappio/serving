@@ -114,3 +114,6 @@ ENV/
 # Models
 base_models
 
+# Http
+http
+
