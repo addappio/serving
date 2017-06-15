@@ -110,10 +110,3 @@ ENV/
 
 # IDE
 .idea
-
-# Models
-base_models
-
-# Http
-http
-
