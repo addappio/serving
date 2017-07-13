@@ -1,0 +1,24 @@
+machine:
+  python:
+    version: 2.7.11
+  environment:
+      PROJECT_NAME: serving
+  services:
+      - docker
+
+test:
+    post:
+        - git config --global user.email "circle@circle.com"
+        - git config --global user.name "Circle deploy"
+
+deployment:
+  staging:
+    branch: develop
+    commands:
+      - mv Dockerfile Dockerfile-base && mv Dockerfile-aptible Dockerfile
+      - git add Dockerfile-base Dockerfile Procfile && git commit -m "Changing Dockerfile and add Procfile"
+      - git push git@beta.aptible.com:therachat-stag/stag-serving.git develop:master --force
+#  production:
+#    branch: master
+#    commands:
+#      - git push git@beta.aptible.com:therachat-stag/stag-serving.git master:master --force

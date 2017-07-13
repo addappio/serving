@@ -1,6 +1,22 @@
 FROM ubuntu:16.04
 
-MAINTAINER Henri Blancke
+MAINTAINER Addapp Corp.
+
+WORKDIR /
+
+RUN mkdir /serving && \
+    mkdir -p /root && \
+    mkdir -p /tmp/models
+
+COPY http /serving/http
+COPY models/ /tmp/models/
+COPY tools /serving/tools
+COPY setup.sh /root/setup.sh
+COPY WORKSPACE /serving/WORKSPACE
+COPY tensorflow /serving/tensorflow
+COPY requirements.txt /root/requirements.txt
+COPY tensorflow_serving /serving/tensorflow_serving
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN apt-get update && \
     apt-get install -y \
@@ -29,25 +45,14 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install pip
 RUN curl -fSsL -O https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
-# Set up gRPC
-RUN pip install \
-        enum34 \
-        futures \
-        mock \
-        six \
-        flask \
-        scipy \
-        scikit-learn \
-        requests \
-        waitress \
-        tensorflow \
-        && \
-    pip install --pre 'protobuf>=3.0.0a3' && \
-    pip install -i https://testpypi.python.org/simple --pre grpcio
+# Install requirements
+RUN pip install -r /root/requirements.txt
+RUN pip install -r /serving/http/requirements.txt
 
 # Set up Bazel & JDK8
 RUN add-apt-repository -y ppa:openjdk-r/ppa && \
@@ -66,8 +71,6 @@ RUN echo "build --spawn_strategy=standalone --genrule_strategy=standalone" \
 ENV BAZELRC /root/.bazelrc
 
 # Install the most recent bazel release.
-WORKDIR /
-
 RUN update-ca-certificates -f
 
 RUN mkdir /bazel && \
@@ -78,25 +81,11 @@ RUN mkdir /bazel && \
     cd / && \
     rm -f /bazel/bazel-0.4.5-installer-linux-x86_64.sh
 
-RUN mkdir /serving && \
-    mkdir -p /root && \
-    mkdir -p /tmp/models
-
-COPY tools /serving/tools
-COPY setup.sh /root/setup.sh
-COPY base_models/ /tmp/models/
-COPY tf_models /serving/tf_models
-COPY WORKSPACE /serving/WORKSPACE
-COPY tensorflow /serving/tensorflow
-COPY models_config.txt /root/models_config.txt
-COPY tensorflow_serving /serving/tensorflow_serving
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 RUN cd /serving/tensorflow && \
     yes "" | ./configure
 
 RUN cd /serving/ && \
-    bazel build -c opt --local_resources 6144,5,1.0 tensorflow_serving/...
+    bazel build -c opt --local_resources 4096,2.0,1.0 tensorflow_serving/model_servers:tensorflow_model_server
 
 # Make NGINX run on the foreground
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf && \

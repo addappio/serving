@@ -18,6 +18,11 @@ table.
 
 ## Getting started
 
+### Clone this bad boy
+```bash
+git clone --recurse-submodules https://github.com/addappio/serving
+```
+
 ### Build the docker images
 ```bash
 cd /into/this/repo
@@ -29,32 +34,16 @@ docker build -t tfserving .
 docker run -d -p 8080:80 -p 9000:9000 --name serving tfserving
 ```
 
-## Updating models
-You can add a model in the `models_config.txt`. Just add a `config` key into the `model_config_list`. 
+## Adding additional models
+You can add a model in the `/models/models_config.txt`. Just add a `config` key into the `model_config_list`. 
 Model versions are stored in the `/tmp/models` base folder. Name the model (sub) folder the same as the model `name`.
 
 ```yaml
 config: {
-    name: "suicide",
-    base_path: "/tmp/models/suicide",
+    name: "MODEL_NAME",
+    base_path: "/tmp/models/MODEL_NAME",
     model_platform: "tensorflow"
 }
-```
-
-## REST endpoints
-
-### Uploading a model
-Models are uploaded by querying the `/upload` endpoint with a `.zip` or `.tar.gz`. 
-The file will get extracted and model checkpoints and graph definitions will be stored in `/tmp/models/model_name`. 
-TensorFlow Serving will pick up the new model and reload it.
-```bash
-curl -X POST http://service.url/upload -H 'cache-control: no-cache' -H 'content-type: multipart/form-data' -F model_name=MODEL_NAME -F file=@FILE_LOCATION.{zip, tar.gz}
-```
-
-### Prediction
-You can get a prediction by querying the `/prediction` endpoint. You need to specify and `"input"` and `"model_name`.
-```bash
-curl -X POST http://service.url/prediction -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{"input": [[]], "model_name": "suicide"}'
 ```
 
 ## gRPC 
@@ -63,6 +52,3 @@ curl -X POST http://service.url/prediction -H 'cache-control: no-cache' -H 'cont
 ```bash
 pip install grpcio
 ```
-
-### Getting started with gRPC
-TODO
