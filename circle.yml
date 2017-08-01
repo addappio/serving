@@ -18,7 +18,9 @@ deployment:
       - mv Dockerfile Dockerfile-base && mv Dockerfile-aptible Dockerfile
       - git add Dockerfile-base Dockerfile Procfile && git commit -m "Changing Dockerfile and add Procfile"
       - git push git@beta.aptible.com:therachat-stag/stag-serving.git develop:master --force
-#  production:
-#    branch: master
-#    commands:
-#      - git push git@beta.aptible.com:therachat-stag/stag-serving.git master:master --force
+  production:
+      branch: master
+      commands:
+        - mv Dockerfile Dockerfile-base && mv Dockerfile-aptible Dockerfile
+        - git add Dockerfile-base Dockerfile Procfile && git commit -m "Changing Dockerfile and add Procfile"
+        - git push git@beta.aptible.com:therachat-prod/prod-serving.git master:master --force
