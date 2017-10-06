@@ -1,3 +1,3 @@
-FROM quay.io/addapptech/tfserving:1.1
+FROM quay.io/addapptech/tfserving:2.0
 
 CMD ["/usr/bin/supervisord", "-c",  "/etc/supervisor/conf.d/supervisord.conf"]
